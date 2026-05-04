@@ -29,6 +29,14 @@ function verifyAge(isAdult) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 0. Restaurar créditos desde localStorage
+  const savedCredits = localStorage.getItem('gameCredits');
+  if (savedCredits) {
+    GC = parseInt(savedCredits);
+    const gcrEl = document.getElementById('gcr');
+    if (gcrEl) gcrEl.textContent = fmt(GC);
+  }
+
   // 1. Manejo de Overlays
   if (localStorage.getItem('ageVerified') === 'true') {
     const overlay = document.getElementById('ageVerificationOverlay');
@@ -109,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // =============================================
   // GLOBAL
   // =============================================
-  let GC = 1000; 
+  let GC = parseInt(localStorage.getItem('gameCredits')) || 1000;
   let plays = 0, bestWin = 0;
   const BETS = [1,2,5,10,20,50,100,200];
   const fmt = n => Math.floor(n).toLocaleString('es-AR');
@@ -117,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setGC(n) {
     GC = Math.max(0, Math.floor(n));
+    localStorage.setItem('gameCredits', GC);
     document.getElementById('gcr').textContent = fmt(GC);
     const scEl=document.getElementById('slotsCredits');
     if(scEl)scEl.textContent = fmt(GC);
@@ -139,6 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
     t.textContent = msg;
     c.appendChild(t);
     setTimeout(() => t.remove(), 3200);
+  }
+
+  function addWelcomeBonus() {
+    const bonusAmount = 50000;
+    setGC(GC + bonusAmount);
+    toast('🎁 ¡Bono Bienvenida activado! +$' + fmt(bonusAmount));
   }
 
   // =============================================

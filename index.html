@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/syles.css">
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
  
 </head>
 <body>
@@ -88,7 +88,7 @@
 
   <!-- NAV -->
   <nav class="nav">
-    <div class="logo"><a href="#sc-lobby">Casino <span>Boulevard</span></a></div>
+    <div class="logo"><a href="javascript:void(0)" onclick="go('lobby')">Casino <span>Boulevard</span></a></div>
     <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
     <div class="navlinks" id="navlinks">
       <a href="#sc-lobby">juegos</a>
@@ -861,6 +861,19 @@
         <button class="dep-confirm-btn" id="depConfirmBtn" onclick="confirmDeposit()" disabled>Confirmar Depósito</button>
         <div class="dep-secure-note">🔒 Transacción segura · SSL encriptado</div>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  MODAL DE MÉTODO DE PAGO FLOTANTE           -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="dep-payment-overlay" id="depPaymentOverlay" onclick="if(event.target.id==='depPaymentOverlay')closePaymentModal()">
+    <div class="dep-payment-modal" id="depPaymentModal">
+      <button class="dep-payment-modal-close" onclick="closePaymentModal()">✕</button>
+      <div class="dep-payment-modal-header" id="depPaymentModalHeader"></div>
+      <div class="dep-payment-modal-form" id="depPaymentModalForm"></div>
+      <button class="dep-confirm-btn" id="depPaymentConfirmBtn" onclick="confirmDepositFromModal()" style="margin-top: 20px;">Confirmar Depósito</button>
+      <div class="dep-secure-note">🔒 Transacción segura · SSL encriptado</div>
     </div>
   </div>
 

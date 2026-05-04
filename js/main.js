@@ -829,12 +829,12 @@ document.addEventListener('DOMContentLoaded', () => {
     {cat:'cocktail',img:'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=200',name:'Cóctel Bulevard',desc:'Preparación exclusiva con gin artesanal, maracuyá, jengibre y espuma de lima',price:'$2.500',badge:'hot'},
     {cat:'cocktail',img:'https://images.unsplash.com/photo-1510626176961-4b57d4fbad03?auto=format&fit=crop&q=80&w=200',name:'Mojito Premium',desc:'Ron blanco, menta fresca, lima, azúcar y agua con gas. Clásico y refrescante',price:'$1.800',badge:''},
     {cat:'vino',img:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&q=80&w=200',name:'Copa Chardonnay',desc:'Chardonnay mendocino fermentado en roble. Fresco, cremoso y elegante',price:'$1.600',badge:''},
-    {cat:'vino',img:'https://images.unsplash.com/photo-1553361371-9bb220265263?auto=format&fit=crop&q=80&w=200',name:'Botella Champagne Brut',desc:'Champagne Brut Imperial. Burbujas finas. Ideal para celebrar tus victorias de la noche',price:'$18.000',badge:'vip'},
-    {cat:'espirituoso',img:'https://images.unsplash.com/photo-1527281400828-ac737a999b1c?auto=format&fit=crop&q=80&w=200',name:'Whisky Single Malt',desc:'Single malt seleccionado, servido con hielo artesanal tallado, en las rocas o puro',price:'$3.800',badge:'vip'},
-    {cat:'espirituoso',img:'https://images.unsplash.com/photo-1516535750141-6e2f83d7392d?auto=format&fit=crop&q=80&w=200',name:'Tequila Premium',desc:'Tequila reposado 100% agave azul. Solo o con sal y limón, a elección',price:'$2.200',badge:'hot'},
+    {cat:'vino',img:'../img/champagne.jpeg',name:'Botella Champagne Brut',desc:'Champagne Brut Imperial. Burbujas finas. Ideal para celebrar tus victorias de la noche',price:'$18.000',badge:'vip'},
+    {cat:'espirituoso',img:'../img/whisky.jpeg',name:'Whisky Single Malt',desc:'Single malt seleccionado, servido con hielo artesanal tallado, en las rocas o puro',price:'$3.800',badge:'vip'},
+    {cat:'espirituoso',img:'../img/tequila.jpeg',name:'Tequila Premium',desc:'Tequila reposado 100% agave azul. Solo o con sal y limón, a elección',price:'$2.200',badge:'hot'},
     {cat:'espirituoso',img:'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=200',name:'Vodka Destilado',desc:'Vodka premium filtrado en cuarzo. Puro, con hielo o en combinación',price:'$1.800',badge:''},
-    {cat:'sin_alcohol',img:'https://images.unsplash.com/photo-1544145945-f904253d0c7e?auto=format&fit=crop&q=80&w=200',name:'Agua Mineral Premium',desc:'Agua mineral sin gas o con gas, servida fría con rodaja de limón o pepino',price:'$600',badge:''},
-    {cat:'caliente',img:'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&q=80&w=200',name:'Café de Especialidad',desc:'Granos de origen único, preparación en V60, aeropress o espresso doble',price:'$900',badge:'new'},
+    {cat:'sin_alcohol',img:'../img/agua.jpeg',name:'Agua Mineral Premium',desc:'Agua mineral sin gas o con gas, servida fría con rodaja de limón o pepino',price:'$600',badge:''},
+    {cat:'caliente',img:'../img/cafe.jpeg',name:'Café de Especialidad',desc:'Granos de origen único, preparación en V60, aeropress o espresso doble',price:'$900',badge:'new'},
     {cat:'caliente',img:'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=200',name:'Té Premium',desc:'Selección de tés de hojas sueltas: chai, earl grey, verde japonés y hierbas locales',price:'$700',badge:''},
   ];
 
@@ -939,25 +939,133 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function selectPM(pm){
     if(selectedPM===pm){
-      document.getElementById('pm-'+pm).classList.remove('on');
-      const f=document.getElementById('form-'+pm);
-      if(f)f.classList.remove('open');
+      closePaymentModal();
       selectedPM=null;
       updateDepBtn();
       return;
     }
-    if(selectedPM){
-      const prevEl=document.getElementById('pm-'+selectedPM);
-      if(prevEl)prevEl.classList.remove('on');
-      const prevF=document.getElementById('form-'+selectedPM);
-      if(prevF)prevF.classList.remove('open');
-    }
     selectedPM=pm;
-    const el=document.getElementById('pm-'+pm);
-    if(el)el.classList.add('on');
-    const fm=document.getElementById('form-'+pm);
-    if(fm){fm.classList.add('open');fm.scrollIntoView({behavior:'smooth',block:'nearest'});}
-    updateDepBtn();
+    openPaymentModal(pm);
+  }
+
+  function openPaymentModal(pm){
+    const overlay=document.getElementById('depPaymentOverlay');
+    const modal=document.getElementById('depPaymentModal');
+    const header=document.getElementById('depPaymentModalHeader');
+    const form=document.getElementById('depPaymentModalForm');
+    
+    if(!overlay || !modal || !header || !form) return;
+    
+    // Get payment method info
+    const pmEl=document.getElementById('pm-'+pm);
+    const pmData={
+      'naranjax':{'name':'NaranjaX','type':'Billetera digital','colors':'linear-gradient(135deg,#ff6b1a,#e64a00)'},
+      'mercadopago':{'name':'Mercado Pago','type':'Billetera digital','colors':'linear-gradient(135deg,#009ee3,#0070d1)'},
+      'galicia':{'name':'Banco Galicia','type':'Transferencia / Home banking','colors':'linear-gradient(135deg,#e30613,#b00010)'},
+      'macro':{'name':'Banco Macro','type':'Transferencia / Home banking','colors':'linear-gradient(135deg,#00a651,#007a3d)'},
+      'bna':{'name':'Banco Nación','type':'Transferencia / Home banking','colors':'linear-gradient(135deg,#003da6,#002880)'},
+      'bbva':{'name':'BBVA Argentina','type':'Transferencia / Home banking','colors':'linear-gradient(135deg,#004a97,#003070)'},
+      'santander':{'name':'Santander','type':'Transferencia / Home banking','colors':'linear-gradient(135deg,#ec0000,#c40000)'},
+      'brubank':{'name':'Brubank','type':'Banco digital','colors':'linear-gradient(135deg,#5b2d8e,#3d1a6b)'},
+      'personal-pay':{'name':'Personal Pay','type':'Billetera digital','colors':'linear-gradient(135deg,#6ec6f5,#009cde)'},
+      'ualá':{'name':'Ualá','type':'Billetera digital','colors':'linear-gradient(135deg,#ff4f64,#e0003a)'}
+    };
+    
+    const info=pmData[pm];
+    if(!info) return;
+    
+    // Get emoji from payment method
+    const pmLogoEl=pmEl?.querySelector('.dep-pm-logo');
+    const emoji=pmLogoEl?.textContent || '💳';
+    
+    // Build header
+    header.innerHTML=`
+      <div class="dep-payment-modal-header-logo" style="background:${info.colors}">${emoji}</div>
+      <div class="dep-payment-modal-header-info">
+        <div class="dep-payment-modal-header-name">${info.name}</div>
+        <div class="dep-payment-modal-header-type">${info.type}</div>
+      </div>
+    `;
+    
+    // Get form from main modal
+    const formEl=document.getElementById('form-'+pm);
+    if(formEl){
+      form.innerHTML=formEl.innerHTML;
+      // Re-attach event listeners to inputs in the new form
+      attachFormInputListeners(pm, form);
+    }
+    
+    // Update button text
+    updatePaymentModalBtn();
+    
+    // Show overlay
+    overlay.classList.add('active');
+    document.body.style.overflow='hidden';
+  }
+
+  function attachFormInputListeners(pm, formContainer){
+    // Reattach card formatting
+    const cardInput=formContainer.querySelector('#f-card-'+pm);
+    if(cardInput) cardInput.addEventListener('input', function(){ fmtCard(this); });
+    
+    // Reattach exp formatting
+    const expInput=formContainer.querySelector('#f-exp-'+pm);
+    if(expInput) expInput.addEventListener('input', function(){ fmtExp(this); });
+  }
+
+  function closePaymentModal(){
+    const overlay=document.getElementById('depPaymentOverlay');
+    if(overlay){
+      overlay.classList.remove('active');
+      document.body.style.overflow='auto';
+    }
+  }
+
+  function updatePaymentModalBtn(){
+    const btn=document.getElementById('depPaymentConfirmBtn');
+    if(!btn) return;
+    const ready = depAmount>=3000 && selectedPM!==null;
+    btn.disabled=!ready;
+    if(depAmount>0&&depAmount<3000){
+      btn.textContent='Mínimo $3.000';
+    } else if(depAmount>=3000 && !selectedPM){
+      btn.textContent='Elegí un método de pago';
+    } else if(ready){
+      btn.textContent='Confirmar $'+depAmount.toLocaleString('es-AR');
+    } else {
+      btn.textContent='Confirmar Depósito';
+    }
+  }
+
+  function confirmDepositFromModal(){
+    if(depAmount<3000){toast('⚠️ El monto mínimo es $3.000','e');return;}
+    if(!selectedPM){toast('⚠️ Seleccioná un método de pago','e');return;}
+    
+    // Copy form values from modal back to original form before validation
+    const modalForm=document.getElementById('depPaymentModalForm');
+    const originalForm=document.getElementById('form-'+selectedPM);
+    if(modalForm && originalForm){
+      const inputs=modalForm.querySelectorAll('input');
+      inputs.forEach(inp=>{
+        const origInp=originalForm.querySelector('#'+inp.id);
+        if(origInp) origInp.value=inp.value;
+      });
+    }
+    
+    if(!validatePMForm())return;
+    const pmNames={'naranjax':'NaranjaX','mercadopago':'Mercado Pago','galicia':'Banco Galicia','macro':'Banco Macro','bna':'Banco Nación','bbva':'BBVA Argentina','santander':'Santander','brubank':'Brubank','personal-pay':'Personal Pay','ualá':'Ualá'};
+    const pmName=pmNames[selectedPM]||selectedPM;
+    closePaymentModal();
+    closeDepModal();
+    const crEl=document.getElementById('gcr');
+    if(crEl){
+      const current=parseInt(crEl.textContent.replace(/\D/g,''))||0;
+      const newVal=current+depAmount;
+      crEl.textContent=newVal.toLocaleString('es-AR');
+      setGC(newVal);
+    }
+    selectedPM=null;
+    toast('✅ ¡Depósito exitoso! +$'+depAmount.toLocaleString('es-AR')+' via '+pmName);
   }
 
   function fmtCard(inp){
@@ -1017,6 +1125,8 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent='Confirmar Depósito';
     }
     if(notice) notice.style.display=(depAmount>=3000 && !selectedPM)?'block':'none';
+    // También actualizar el botón del modal flotante
+    updatePaymentModalBtn();
   }
 
   function confirmDeposit(){

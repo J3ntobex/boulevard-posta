@@ -783,6 +783,19 @@
   </div>
 
   <!-- ═══════════════════════════════════════════ -->
+  <!--  MODAL DE MÉTODO DE PAGO FLOTANTE           -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="dep-payment-overlay" id="depPaymentOverlay" onclick="if(event.target.id==='depPaymentOverlay')closePaymentModal()">
+    <div class="dep-payment-modal" id="depPaymentModal">
+      <button class="dep-payment-modal-close" onclick="closePaymentModal()">✕</button>
+      <div class="dep-payment-modal-header" id="depPaymentModalHeader"></div>
+      <div class="dep-payment-modal-form" id="depPaymentModalForm"></div>
+      <button class="dep-confirm-btn" id="depPaymentConfirmBtn" onclick="confirmDepositFromModal()" style="margin-top: 20px;">Confirmar Depósito</button>
+      <div class="dep-secure-note">🔒 Transacción segura · SSL encriptado</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
   <!--  JACKPOT TICKER                             -->
   <!-- ═══════════════════════════════════════════ -->
   <!-- JACKPOT TICKER -->

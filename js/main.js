@@ -29,7 +29,7 @@ function verifyAge(isAdult) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Manejo de Overlays (Verificación de edad y bienvenida)
+  // 1. Manejo de Overlays
   if (localStorage.getItem('ageVerified') === 'true') {
     const overlay = document.getElementById('ageVerificationOverlay');
     if (overlay) overlay.style.display = 'none';
@@ -39,18 +39,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (welcomeOverlay) welcomeOverlay.style.display = 'none';
   }
 
-  // 2. LÓGICA DE NAVEGACIÓN INTELIGENTE
+  // 2. Lógica de Navegación
   if (document.getElementById('sc-lobby')) {
     go('lobby'); 
     if(typeof buildReels === 'function') buildReels(); 
-    // Inicializar Ruleta al cargar el Lobby
     initRouleta();
   } 
   else if (document.getElementById('sc-gastro')) {
     go('gastro');
   }
 
-  // 3. INICIALIZACIÓN DE BEBIDAS
+  // 3. Inicialización de Bebidas
   const gastroCats = document.getElementById('gastroCats');
   if (gastroCats) {
     gastroCats.addEventListener('click', e => {
@@ -65,8 +64,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initNavbarButtons();
-});
 
+  // 4. Inicialización Visual de Slots (Puntos y Tabla de Pagos)
+  const pdots = document.getElementById('pdots');
+  if(pdots){
+    pdots.innerHTML = '';
+    for(let i=0;i<20;i++){
+      const d=document.createElement('div');
+      d.className='pdot';
+      pdots.appendChild(d);
+    }
+    updDots();
+  }
+
+  const ptg=document.getElementById('ptgrid');
+  if(ptg){
+    ptg.innerHTML = '';
+    PAYS.forEach(p=>{
+      const r=document.createElement('div');
+      r.className='ptrow';
+      r.innerHTML=`<span class="ptsyms">${p.c.map(x=>x||'').join(' ')}</span><span class="ptmult">×${p.m}${p.l?' · '+p.l:''}</span>`;
+      ptg.appendChild(r);
+    });
+  }
+
+  // 5. Asignación de Eventos de Slots (La solución al error)
+  if(document.getElementById('spinBtn')){
+    document.getElementById('spinBtn').addEventListener('click',spin);
+    document.getElementById('autoBtn').addEventListener('click',toggleAuto);
+    document.getElementById('maxBtn').addEventListener('click',()=>{
+      sBet=BSTEPS[BSTEPS.length-1];sLines=20;
+      document.querySelectorAll('.lbtn').forEach(b=>b.classList.toggle('on',b.dataset.l==='20'));
+      updSlotsUI();updDots();
+    });
+    document.getElementById('sbu').addEventListener('click',()=>{const i=BSTEPS.indexOf(sBet);if(i<BSTEPS.length-1){sBet=BSTEPS[i+1];updSlotsUI();}});
+    document.getElementById('sbd').addEventListener('click',()=>{const i=BSTEPS.indexOf(sBet);if(i>0){sBet=BSTEPS[i-1];updSlotsUI();}});
+    document.querySelectorAll('.lbtn').forEach(btn=>btn.addEventListener('click',()=>{
+      sLines=parseInt(btn.dataset.l);
+      document.querySelectorAll('.lbtn').forEach(b=>b.classList.toggle('on',b===btn));
+      updSlotsUI();updDots();
+    }));
+  }
+});
   // =============================================
   // GLOBAL
   // =============================================
@@ -201,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>`);
   }
 
+
   // =============================================
   // SLOTS
   // =============================================
@@ -304,22 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
     await spin();if(sAuto)sAutoT=setTimeout(runAuto,300);
   }
 
-  if(document.getElementById('spinBtn')){
-  document.getElementById('spinBtn').addEventListener('click',spin);
-  document.getElementById('autoBtn').addEventListener('click',toggleAuto);
-  document.getElementById('maxBtn').addEventListener('click',()=>{
-    sBet=BSTEPS[BSTEPS.length-1];sLines=20;
-    document.querySelectorAll('.lbtn').forEach(b=>b.classList.toggle('on',b.dataset.l==='20'));
-    updSlotsUI();updDots();
-  });
-  document.getElementById('sbu').addEventListener('click',()=>{const i=BSTEPS.indexOf(sBet);if(i<BSTEPS.length-1){sBet=BSTEPS[i+1];updSlotsUI();}});
-  document.getElementById('sbd').addEventListener('click',()=>{const i=BSTEPS.indexOf(sBet);if(i>0){sBet=BSTEPS[i-1];updSlotsUI();}});
-  document.querySelectorAll('.lbtn').forEach(btn=>btn.addEventListener('click',()=>{
-    sLines=parseInt(btn.dataset.l);
-    document.querySelectorAll('.lbtn').forEach(b=>b.classList.toggle('on',b===btn));
-    updSlotsUI();updDots();
-  }));
-  }
+  
 
   // =============================================
   // RULETA
